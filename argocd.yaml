@@ -12,7 +12,7 @@ spec:
   # 1. Source: "어디에 있는 코드를 배포할 것인가?" (Git 정보)
   source:
     # 감시할 Git Repository 주소입니다. (HTTPS)
-    repoURL: 'https://github.com/MY_GITHUB_ID/argocd-gitactions-app.git'
+    repoURL: 'https://github.com/hyoungwonkang/argocd-gitactions-app.git'
     # 추적할 브랜치 또는 태그입니다. (HEAD는 기본 브랜치를 의미합니다.)
     targetRevision: main
     # Repository 내부에서 실제 Manifest(Helm Chart)가 위치한 경로입니다.
