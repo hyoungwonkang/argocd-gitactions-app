@@ -4,7 +4,7 @@ image:
   repository: MY_DOCKERHUB_ID/argocd-gitactions-app  # MY_DOCKERHUB_ID: 본인의 Docker Hub ID로 변경
   pullPolicy: IfNotPresent
   # CI 파이프라인이 이 태그를 빌드 번호(예: latest -> 1 -> 2 -> 3 -> ...)로 계속 변경합니다.
-  tag: "latest"
+  tag: "2"
 
 service:
   type: LoadBalancer
