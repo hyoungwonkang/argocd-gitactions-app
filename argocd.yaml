@@ -1,0 +1,43 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application  # ArgoCD의 핵심 리소스 타입인 'Application'입니다.
+metadata:
+  name: argocd-gitactions-app
+  # 중요: 이 리소스 자체는 ArgoCD가 설치된 네임스페이스에 생성되어야 합니다.
+  # 보통 argocd 네임스페이스를 사용합니다.
+  namespace: argocd
+spec:
+  # ArgoCD 프로젝트명 (접근 제어 등을 위해 사용하며, 기본값은 default입니다.)
+  project: default
+
+  # 1. Source: "어디에 있는 코드를 배포할 것인가?" (Git 정보)
+  source:
+    # 감시할 Git Repository 주소입니다. (HTTPS)
+    repoURL: 'https://github.com/MY_GITHUB_ID/argocd-gitactions-app.git'
+    # 추적할 브랜치 또는 태그입니다. (HEAD는 기본 브랜치를 의미합니다.)
+    targetRevision: main
+    # Repository 내부에서 실제 Manifest(Helm Chart)가 위치한 경로입니다.
+    # 이 경로에 Chart.yaml 파일이 있으면 ArgoCD는 Helm 애플리케이션으로 판단합니다.
+    path: k8s/helm
+
+  # 2. Destination: "어디로 배포할 것인가?" (K8s 클러스터 정보)
+  destination:
+    # 배포 대상 클러스터 API 주소입니다.
+    # ArgoCD가 설치된 동일 클러스터에 배포할 때는 내부 DNS를 사용합니다.
+    server: 'https://kubernetes.default.svc'
+    # 실제 애플리케이션(파드, 서비스 등)이 생성될 네임스페이스입니다.
+    # metadata.namespace(argocd)와 다를 수 있음을 주의해야 합니다.
+    namespace: default
+
+  # 3. Sync Policy: "동기화 전략은 어떻게 할 것인가?"
+  syncPolicy:
+    automated: # 자동 동기화 활성화 (Git 변경 감지 시 자동 배포)
+      # Prune: Git에서 파일이 삭제되면, K8s 리소스도 같이 삭제합니다.
+      # (false일 경우 Git에서 지워도 K8s에 리소스가 남습니다 - 고아 리소스 방지)
+      prune: true
+      # SelfHeal: 클러스터에서 누군가 수동으로(kubectl) 설정을 변경하면,
+      # 즉시 Git 상태로 강제 복구합니다. (Configuration Drift 방지)
+      selfHeal: true
+    
+    # 동기화 옵션 추가 설정
+    syncOptions:
+      - CreateNamespace=true # destination.namespace가 없으면 자동으로 생성합니다.

@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+spec:
+  # values.yaml의 service.type을 참조 (예: LoadBalancer, NodePort, ClusterIP)
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      # 컨테이너 내부의 포트 (8080)
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: TCP
+      name: http
+  # Deployment의 label과 일치해야 트래픽이 전달됨
+  selector:
+    app: {{ .Chart.Name }}
